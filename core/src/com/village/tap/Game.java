@@ -8,8 +8,12 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.input.GestureDetector;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Game extends ApplicationAdapter {
-    private static int goldCount = 1000;
+    private static int goldCount = 1200;
+    private static List<Upgrade> upgrades;
     SpriteBatch batch;
     private int gameTick = 0;
 
@@ -21,12 +25,17 @@ public class Game extends ApplicationAdapter {
         goldCount += toAdd;
     }
 
+
     static boolean spendGold(int price) {
         if (goldCount >= price) {
             goldCount -= price;
             return true;
         }
         return false;
+    }
+
+    static void buyUpgrade(int index){
+        upgrades.add(getAvailableUpgrades().get(index));
     }
 
     static int getCurrentVillagerCount() {
@@ -38,12 +47,38 @@ public class Game extends ApplicationAdapter {
 
     }
 
+
+    public static int getGoldPerSec() {
+        int goldPerVillagerSec = 0;
+        for(Upgrade upgrade : getUpgrades()){
+            if(upgrade instanceof TaxUpgrade){
+                TaxUpgrade taxUpgrade = (TaxUpgrade) upgrade;
+
+                goldPerVillagerSec += taxUpgrade.getGoldPerSec();
+            }
+        }
+        int goldPerSec = getCurrentVillagerCount() * goldPerVillagerSec;
+
+        return goldPerSec;
+    }
+
+
     static int getMaxVillagerCount() {
         int count = 0;
         for (Building l : Plot.getBuildings()) {
             count += l.getPlan().getMaxCapacity();
         }
         return count;
+    }
+
+    static List<Upgrade> getUpgrades(){
+        return upgrades;
+    }
+
+    static List<Upgrade> getAvailableUpgrades(){
+        List<Upgrade> allUpgrades = new ArrayList<Upgrade>(Upgrade.AllUpgrades);
+        allUpgrades.removeAll(upgrades);
+        return allUpgrades;
     }
 
     private void initCamera() {
@@ -62,12 +97,13 @@ public class Game extends ApplicationAdapter {
         World.load();
         Plot.load();
         GUI.loadGui(batch);
-        Input proc = new Input(0.35f);
+
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
         inputMultiplexer.addProcessor(Global.getCurrentStage());
         GestureDetector detector = new GestureDetector(new Gestures());
         inputMultiplexer.addProcessor(detector);
-        inputMultiplexer.addProcessor(proc);
+        Upgrade.load();
+        upgrades = new ArrayList<Upgrade>();
 
         Gdx.input.setInputProcessor(inputMultiplexer);
 
@@ -91,8 +127,9 @@ public class Game extends ApplicationAdapter {
 
     void update() {
         gameTick++;
-        if (gameTick > 12) { //Elke 120 Gameticks villagers generaten.
+        if (gameTick > Gdx.graphics.getFramesPerSecond()) { //Elke 120 Gameticks villagers generaten.
             Plot.generateVillagers();
+            Game.goldCount += getGoldPerSec();
             gameTick = 0;
         }
     }

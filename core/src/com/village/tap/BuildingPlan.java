@@ -18,26 +18,21 @@ import com.badlogic.gdx.utils.Align;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.badlogic.gdx.net.HttpRequestBuilder.json;
+
 public class BuildingPlan {
     private static List<BuildingPlan> buildingPlans;
-    private static Texture house;
-    private static Texture church;
 
     private String name;
-    private Sprite sprite;
+    private String spriteName;
+    private String description;
     private int cost;
     private int maxCapacity;
     private int width;
     private int height;
+    private Sprite sprite;
 
-    public BuildingPlan(String name, Sprite sprite, int cost, int maxCapacity, int width, int height) {
-        this.name = name;
-        this.sprite = sprite;
-        sprite.setSize(width, height);
-        this.cost = cost;
-        this.maxCapacity = maxCapacity;
-        this.width = width;
-        this.height = height;
+    public BuildingPlan() {
     }
 
     public static List<BuildingPlan> getBuildingPlans() {
@@ -50,12 +45,14 @@ public class BuildingPlan {
 
     public static void load() {
         buildingPlans = new ArrayList<BuildingPlan>();
-        house = new Texture("house.png");
-        church = new Texture("church.png");
-        buildingPlans.add(new BuildingPlan("Small house", new Sprite(house), 100, 6, 4, 4));
-        buildingPlans.add(new BuildingPlan("Bigger house", new Sprite(house), 200, 12, 5, 5));
-        buildingPlans.add(new BuildingPlan("Church", new Sprite(church), 650, 1, 3, 5));
+        buildingPlans = json.fromJson(ArrayList.class, BuildingPlan.class,
+                Gdx.files.internal("data/buildings.json").readString());
 
+        // TODO: switch to TextureAtlas
+        for(BuildingPlan buildingPlan : buildingPlans){
+            Texture currentTexture = new Texture(buildingPlan.spriteName);
+            buildingPlan.sprite = new Sprite(currentTexture);
+        }
     }
 
     public static void showBuildingPlanDialog() {

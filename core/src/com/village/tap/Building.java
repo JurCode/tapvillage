@@ -50,6 +50,80 @@ public class Building {
     }
 
     public void showBuildingInfoDialog() {
+        if(this.getPlan().getName().contains("house")){
+            showHouseInfo();
+        }
+        else if(this.getPlan().getName().equals("Townhall")){
+            showTownHallInfo();
+        }
+    }
+
+    private void showTownHallInfo() {
+        Label label = new Label(plan.getName() + " - Upgrades", Global.getSkin());
+        TextButton closeButton = new TextButton("X", Global.getSkin());
+        label.setAlignment(Align.center);
+        final Dialog dialog = new Dialog("", Global.getSkin(), "dialog");
+        closeButton.setPosition(closeButton.getX() - 30, closeButton.getY() - 30);
+        closeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                dialog.hide();
+            }
+        });
+        dialog.getContentTable().add(label).width(Gdx.graphics.getWidth() - 200).height(200);
+        dialog.getContentTable().add(closeButton).width(100).height(100).padLeft(-200);
+        dialog.getContentTable().row();
+        Table table = new Table();
+        table.top();
+        int index = 0;
+        for (final Upgrade upgrade : Game.getAvailableUpgrades()) {
+            final int temp = index++;
+            final TextButton z = new TextButton("Buy\n" + upgrade.getCost() + Global.getCurrency(), Global.getSkin());
+            z.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+
+                    if(Game.spendGold(upgrade.getCost())){
+                        Game.buyUpgrade(temp);
+                        z.setText("Bought");
+                        z.removeListener(this);
+                    }
+                }
+            });
+            table.add(new Label(upgrade.getTitle() + "\n" + upgrade.getDescription(), Global.getSkin())).width(600).padRight(25).padBottom(30);
+            table.add(z).width(150).height(100).padRight(25).padBottom(30);
+            table.row();
+
+        }
+        table.setHeight(Gdx.graphics.getHeight() - 200);
+        table.setWidth(Gdx.graphics.getWidth() - 200);
+        ScrollPane pane = new ScrollPane(table, Global.getSkin());
+
+
+//Maak font sizes proper.
+        for (Actor a : table.getChildren()) {
+            if (a instanceof Label) {
+                Label temp = (Label) a;
+                temp.setFontScale(.5f);
+            }
+            if (a instanceof TextButton) {
+                TextButton temp = (TextButton) a;
+                temp.getLabel().setFontScale(.5f);
+            }
+        }
+        dialog.getContentTable().add(pane).height(1000);
+        dialog.invalidateHierarchy();
+        dialog.invalidate();
+        dialog.layout();
+        Color color = dialog.getColor();
+        color.a = 0;
+        dialog.setColor(color);
+        dialog.show(Global.getCurrentStage());
+    }
+
+
+
+    private void showHouseInfo(){
         Label label = new Label(plan.getName(), Global.getSkin());
         TextButton closeButton = new TextButton("X", Global.getSkin());
         label.setAlignment(Align.center);

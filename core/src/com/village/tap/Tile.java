@@ -9,6 +9,7 @@ public class Tile {
     private int x;
     private int y;
     private TileType type;
+    private boolean hasBuilding;
 
     public Tile(int x, int y) {
         this.y = y;
@@ -28,6 +29,10 @@ public class Tile {
         return y;
     }
 
+    public void setHasBuilding(boolean hasBuilding){
+        this.hasBuilding = hasBuilding;
+    }
+
     public void UpdateType(TileType newType){
         type = newType;
     }
@@ -37,6 +42,6 @@ public class Tile {
     }
 
     public boolean isBuildable(){
-        return type == TileType.Grass;
+        return type == TileType.Grass && !hasBuilding;
     }
 }

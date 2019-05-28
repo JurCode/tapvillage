@@ -1,8 +1,10 @@
 package com.village.tap;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 public class Gestures implements GestureDetector.GestureListener {
     private float initialZoom;
@@ -15,7 +17,13 @@ public class Gestures implements GestureDetector.GestureListener {
 
     @Override
     public boolean tap(float x, float y, int count, int button) {
+        Vector3 erna = Global.getCurrentCamera().unproject(new Vector3(x,y,0f));
+        for(Building s : Plot.getBuildings()) {
+            if(erna.x < (s.getPosition().getWidth() + s.getPosition().getX()) && erna.x > s.getPosition().getX() && erna.y < (s.getPosition().getHeight() + s.getPosition().getY()) && erna.y > s.getPosition().getY()){
+                s.showBuildingInfoDialog();
+            }
 
+        }
         return false;
     }
 
@@ -33,7 +41,11 @@ public class Gestures implements GestureDetector.GestureListener {
 
     @Override
     public boolean pan(float x, float y, float deltaX, float deltaY) {
-
+        float a = Gdx.input.getDeltaX() * 0.35f;
+        float b = Gdx.input.getDeltaY() * 0.35f;
+        a = a * -1;
+        Global.getCurrentCamera().position.add(a, b, 0);
+        Global.getCurrentCamera().update();
         return false;
     }
 

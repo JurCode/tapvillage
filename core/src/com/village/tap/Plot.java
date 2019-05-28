@@ -32,7 +32,6 @@ public class Plot {
     public static void renderPlots(SpriteBatch batch) {
         for (Building s : buildings) {
             batch.draw(s.getPlan().getSprite(), s.getPosition().getX(), s.getPosition().getY());
-
         }
 
 

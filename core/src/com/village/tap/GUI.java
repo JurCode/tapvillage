@@ -3,6 +3,7 @@ package com.village.tap;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -27,10 +28,12 @@ public class GUI {
         shapeRenderer = new ShapeRenderer();
         // Main stage
         main = new Stage();
-        Label.LabelStyle labelStyle = new Label.LabelStyle(Global.getSkin().getFont("default"), Color.BLACK);
+        BitmapFont font = Global.getSkin().getFont("default");
+        font.getData().scale(-0.3f);
+        Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.BLACK);
         statLabel = new Label("Gold: " + Game.getGoldCount() + "  Villagers: " + Game.getCurrentVillagerCount() + " / " + Game.getMaxVillagerCount(), labelStyle);
         statLabel.setX(20);
-        statLabel.setY(Gdx.graphics.getHeight() - 90);
+        statLabel.setY(Gdx.graphics.getHeight() - 54);
         TextButton buyBuildingButton = new TextButton("Buy\nbuilding", Global.getSkin());
         buyBuildingButton.setWidth(Gdx.graphics.getWidth() * 0.23f);
         buyBuildingButton.setX(Gdx.graphics.getWidth() * 0.01f);
@@ -92,18 +95,19 @@ public class GUI {
 
         bgMusic = Gdx.audio.newMusic(Gdx.files.internal("bg.mp3"));
         bgMusic.play();
-
-
     }
 
     static void updateStatLabel() {
-        statLabel.setText("Gold: " + Game.getGoldCount() + "  Villagers: " + Game.getCurrentVillagerCount() + " / " + Game.getMaxVillagerCount());
+        statLabel.setText(
+                "Gold: " + Game.getGoldCount() +
+                "  Villagers: " + Game.getCurrentVillagerCount() + "/" + Game.getMaxVillagerCount() +
+                "  Gold/s: " + Game.getGoldPerSec());
     }
 
     static void renderGui() {
         updateStatLabel();
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.rect(0, Gdx.graphics.getHeight() - 100, Gdx.graphics.getWidth(), 100);
+        shapeRenderer.rect(0, Gdx.graphics.getHeight() - 55, Gdx.graphics.getWidth(), 55);
         shapeRenderer.end();
         batch.begin();
 

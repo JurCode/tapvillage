@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PlaceMode {
     private static BuildingPlan currentPlan;
@@ -42,20 +43,24 @@ public class PlaceMode {
     }
 
     public static void ConfirmPurchase() {
-        if (Game.spendGold(currentPlan.getCost()) && canBuild()) {
-            Tile t = getSelectedTiles().get(0);
+        if (canBuild() && Game.spendGold(currentPlan.getCost())) {
+            List<Tile> selectedTiles = getSelectedTiles();
+            Tile t = selectedTiles.get(0);
             Plot.buyBuilding(t.getX() * 32, t.getY() * 32, currentPlan);
+            for(Tile tile : selectedTiles)
+                tile.setHasBuilding(true);
+
             GUI.exitPlaceMode();
         }
     }
 
     public static ArrayList<Tile> getSelectedTiles() {
         ArrayList<Tile> selectedTiles = new ArrayList<Tile>();
-        int newX = (currentPlan.getTileHeight() / 2) * Global.getTileSize();
-        int newY = (currentPlan.getTileWidth() / 2) * Global.getTileSize();
+        int newX = (currentPlan.getTileWidth() / 2) * Global.getTileSize();
+        int newY = (currentPlan.getTileHeight() / 2) * Global.getTileSize();
         Vector3 result = Global.getCurrentCamera().unproject(new Vector3(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0f));
-        for (int i = 0; i < currentPlan.getTileHeight(); i++) {
-            for (int j = 0; j < currentPlan.getTileWidth(); j++) {
+        for (int i = 0; i < currentPlan.getTileWidth(); i++) {
+            for (int j = 0; j < currentPlan.getTileHeight(); j++) {
                 try {
                     selectedTiles.add(World.getTile((roundUp(result.x - newX) + (i * Global.getTileSize())) / 32, (roundUp(result.y - newY) + (j * Global.getTileSize())) / 32));
                 } catch (Exception e) {
