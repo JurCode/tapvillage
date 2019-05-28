@@ -1,0 +1,14 @@
+[
+    {
+        "title":"Tax 1",
+        "description": "Earns you one gold per person per second",
+        "cost": 100,
+        "goldPerSec": 1
+    },
+    {
+        "title":"Tax 2",
+        "description": "Earns you an additional gold per person per second",
+        "cost": 1000,
+        "goldPerSec": 1
+    }
+]

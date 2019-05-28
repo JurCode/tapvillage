@@ -1,0 +1,21 @@
+[
+    {
+        "name":"Small house",
+        "spriteName": "house.png",
+        "description": "Holds up to 4 villagers.",
+        "cost": 400,
+        "maxCapacity":4,
+        "width": 4,
+        "height": 4
+    },
+    {
+        "name":"Townhall",
+        "spriteName": "townhall.png",
+        "description": "Manage upgrades for your town.",
+        "cost": 600,
+        "maxCapacity":0,
+        "width": 8,
+        "height": 4
+    }
+
+]
